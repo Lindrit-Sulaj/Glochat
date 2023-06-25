@@ -9,7 +9,7 @@ export default function WriteMessage() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault()
-    const res = await createMessage({ text, photoURL: user.photoURL, displayName: user.displayName});
+    const res = await createMessage({ text, photoURL: user.photoURL, displayName: user.displayName, uid: user.uid});
     console.log(res);
   }
 

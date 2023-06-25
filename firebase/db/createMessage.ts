@@ -1,7 +1,7 @@
 import { db } from "..";
 import { addDoc, collection } from "firebase/firestore";
 
-async function createMessage({ text, photoURL, displayName }: { text: string, photoURL: string, displayName: string }) {
+async function createMessage({ text, photoURL, displayName, uid }: { text: string, photoURL: string, displayName: string, uid: string }) {
   let res;
   
   try {
@@ -9,6 +9,8 @@ async function createMessage({ text, photoURL, displayName }: { text: string, ph
       text,
       photoURL,
       displayName,
+      uid,
+      sentAt: new Date().getTime()
     })
   } catch (err) {
     console.log(err);

@@ -3,9 +3,27 @@ import { useAuth } from "./AuthContext"
 import { Login, WriteMessage } from "@/components";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
+import { useState, useEffect, useRef } from "react";
+import { db } from "@/firebase";
+import { collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
+import { Message } from "@/components";
 
 export default function Home() {
+  const q = query(collection(db, "messages"), orderBy("sentAt"), limit(50));
   const user = useAuth();
+  const [messages, setMessages] = useState<any>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let newDocs: {[key:string]: string}[] = [];
+      snapshot.docs.map((document) => {
+        newDocs.push(document.data());
+      });
+      setMessages(newDocs)
+    });
+
+    return () => unsubscribe()
+  }, [])
 
   const handleSignOut = async () => {
     try {
@@ -35,10 +53,10 @@ export default function Home() {
           Log Out
         </button>
       </div>
-      <div className="overflow-y-scroll h-[calc(100vh-130px)]">
-        
-        
-        <div className="scrollDiv"></div>
+      <div className="overflow-y-scroll h-[calc(100vh-130px)] px-4 pt-6 pb-3">
+        {messages.map((message: any, index: number) => (
+          <Message {...message} key={index} />
+        ))}
       </div>
       <WriteMessage />
     </main>
